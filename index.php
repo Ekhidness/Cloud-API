@@ -33,7 +33,7 @@ $router->add('POST', '/api-file/registration', fn($req) => $authController->regi
 $router->add('POST', '/api-file/authorization', fn($req) => $authController->login($req));
 
 $protected = function(callable $handler) use ($request, $db) {
-    return function($req, $db, $params) use ($handler, $request, $db) {
+    return function($req, $_db, $params) use ($handler, $request, $db) {
         $userId = AuthMiddleware::requireAuth($request, $db);
         $handler($req, $userId, $params);
     };
