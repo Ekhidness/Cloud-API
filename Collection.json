@@ -1,0 +1,602 @@
+{
+  "info": {
+    "name": "API",
+    "description": null,
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00_Register_CoAuthor",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/registration",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "registration"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{co_email}}\",\n  \"password\": \"{{user_pass}}\",\n  \"first_name\": \"Co\",\n  \"last_name\": \"Author\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "const body = pm.response.json();",
+              "if (pm.response.code === 201 && body.token) {",
+              "    console.log(\"Co-author registered\");",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "01_Registration",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/registration",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "registration"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_pass}}\",\n  \"first_name\": \"Main\",\n  \"last_name\": \"User\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "const body = pm.response.json();",
+              "if (body.token) {",
+              "    pm.environment.set(\"token\", body.token);",
+              "    console.log(\"Token saved:\", body.token);",
+              "} else {",
+              "    console.log(\"No token in response\");",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02_Authorization",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/authorization",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "authorization"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_pass}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "const body = pm.response.json();",
+              "if (body.token) {",
+              "    pm.environment.set(\"token\", body.token);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03_Upload_Files",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/files",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "files"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "files",
+              "disabled": false,
+              "type": "file",
+              "src": "test.pdf"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "const body = pm.response.json();",
+              "console.log(\"Upload response:\", body);",
+              "",
+              "const successFile = body.find(f => f.success === true);",
+              "if (successFile && successFile.file_id) {",
+              "    pm.environment.set(\"file_id\", successFile.file_id);",
+              "    console.log(\"Saved file_id:\", successFile.file_id);",
+              "} else {",
+              "    console.log(\"No success file found!\");",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04_Disk",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/files/disk",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "files",
+            "disk"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "05_Shared",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/files/shared",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "files",
+            "shared"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "06_Rename_File",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/files/{{file_id}}",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "files",
+            "{{file_id}}"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"New Name.pdf\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "const body = pm.response.json();",
+              "console.log(\"Rename response:\", body);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07_Download_File",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/files/{{file_id}}",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "files",
+            "{{file_id}}"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "08_Grant_Access",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/files/{{file_id}}/accesses",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "files",
+            "{{file_id}}",
+            "accesses"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{co_email}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "09_Revoke_Access",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false,
+            "type": "default"
+          }
+        ],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/files/{{file_id}}/accesses",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "files",
+            "{{file_id}}",
+            "accesses"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{co_email}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "10_Delete_File",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/files/{{file_id}}",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "files",
+            "{{file_id}}"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "11_Logout",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "{{token}}",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/logout",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "logout"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    },
+    {
+      "name": "12_Negative_403",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "{{host}}/files/disk",
+          "protocol": "",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "files",
+            "disk"
+          ],
+          "query": [],
+          "variable": []
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "host",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "user_email",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "user_pass",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "co_email",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "file_id",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}
