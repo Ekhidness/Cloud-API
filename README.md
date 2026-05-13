@@ -78,7 +78,7 @@ mkdir C:\xampp\htdocs\api-file\uploads
 Проект поставляется с готовой коллекцией тестов.
 
 ### 1. Импорт коллекции
-Откройте Bruno → `File` → `Open Collection` → выберите папку с файлами `.bru`.
+Откройте Bruno → `File` → `Open Collection` → выберите файл `Collection.json`
 
 ### 2. Настройка Environment
 Нажмите иконку  (Environments) → `Create`. Назовите его `Local` и добавьте переменные:
@@ -91,6 +91,8 @@ mkdir C:\xampp\htdocs\api-file\uploads
 | `co_email` | `co@test.com` |
 | `token` | *(оставьте пустым)* |
 | `file_id` | *(оставьте пустым)* |
+
+Или импортируйте файл `Env.json`.
 
 > ⚠️ **Важно:** Используйте **Окружение Коллекции (Collection Environment)**, а не Глобальное. Это предотвратит конфликты переменных (`file_id`) между запусками.
 
